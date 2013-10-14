@@ -48,6 +48,41 @@ def prepare_record(record):
 
 @app.route('/api/v1/log', methods=['POST'])
 def new_log():
+    """
+    {
+        "title": "Log Schema",
+        "type": "object",
+        "properties": {
+            "created_at": {
+                "type": "string",
+                "description": "Timestamp of log, formatted in ISO8601",
+                "format": "date-time"
+            },
+            "name": {
+                "type": "string",
+                "description": "Name of node",
+                "format": "host-name"
+            },
+            "results": {
+                "type": "array",
+                "items": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "path": {
+                            "type": "string"
+                        },
+                        "data": {
+                        }
+                    },
+                    "required": ["name", "data"]
+                }
+            }
+        },
+        "required": ["created_at", "name", "results"]
+    }
+    """
     record = request.get_json()
     prepare_record(record)
     log = mongoDB.db.log
