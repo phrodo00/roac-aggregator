@@ -4,6 +4,8 @@ from flask import Flask, request
 from flask.ext.jsonpify import jsonify
 from pymongo import MongoClient
 
+import dateutil.parser
+
 from flask import json as flask_json
 from bson.objectid import ObjectId
 
@@ -13,7 +15,7 @@ SECRET_KEY = "development key"
 DEBUG = True
 MONGO_DB = 'roac'
 
-app.config.from_object(__name__)
+app.config.from_object(__name__.split('.')[0])
 
 
 class JSONEncoder(flask_json.JSONEncoder):
@@ -40,12 +42,17 @@ class MongoDB(object):
 mongoDB = MongoDB(app)
 
 
-@app.route('/log/<string:node>', methods=['POST'])
-def new_log(node):
-    data = request.get_json()
+def prepare_record(record):
+    record['created_at'] = dateutil.parser.parse(record['created_at'])
+
+
+@app.route('/api/v1/log', methods=['POST'])
+def new_log():
+    record = request.get_json()
+    prepare_record(record)
     log = mongoDB.db.log
-    data_id = log.insert(data)
-    return jsonify(data)
+    data_id = log.insert(record)
+    return jsonify(record)
 
 if __name__ == '__main__':
     app.run()
