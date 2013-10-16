@@ -1,4 +1,5 @@
 import dateutil.parser
+from datetime import datetime
 
 
 class AttrToItem(object):
@@ -30,5 +31,18 @@ class Record(dict):
 
     def __init__(self, mapping):
         dict.__init__(self, mapping)
-        self['created_at'] = dateutil.parser.parse(mapping['created_at'])
+        if not isinstance(self.created_at, datetime):
+            self.created_at = dateutil.parser.parse(self.created_at)
         self.results = [Result(result) for result in self.results]
+
+
+class Node(dict):
+    name = AttrToItem('name')
+    status = AttrToItem('status')
+
+    @classmethod
+    def build(cls, name):
+        node = cls()
+        node.name = name
+        node.status = {}
+        return node
