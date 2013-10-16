@@ -46,3 +46,11 @@ class Node(dict):
         node.name = name
         node.status = {}
         return node
+
+    @classmethod
+    def status_key(cls, key):
+        """Used to delete dots from dictionary keys since mongodb chokes up.
+        """
+        key = key.replace('_', '__')
+        key = key.replace('.', '_')
+        return key
