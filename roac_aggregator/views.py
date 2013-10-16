@@ -67,7 +67,10 @@ def new_log():
         "required": ["created_at", "name", "results"]
     }
     """
-    record = Record(request.get_json())
+    try:
+        record = Record(request.get_json())
+    except Exception:
+        raise InvalidUsage("Couldn't parse data")
 
     # Compare the node name with the IP's name and discard results that don't
     # match.
