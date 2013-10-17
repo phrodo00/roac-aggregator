@@ -19,4 +19,4 @@ app.json_encoder = JSONEncoder
 server = MongoDB(app)
 
 
-from . import views
+from . import api
