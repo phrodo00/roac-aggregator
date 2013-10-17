@@ -28,7 +28,18 @@ def handle_invalid_usage(error):
     return response
 
 
-@app.route('/api/v1/log/', methods=['POST'])
+def validate_ip(ip, name):
+    """Compare the node name with the IP's name and discard results that don't
+    match.
+    """
+    ip_name = socket.gethostbyaddr(ip)[0]
+    ip_name = ip_name.split('.')[0]
+    if ip_name != name:
+        raise InvalidUsage(
+            'Info about nodes should be posted by the same node', 403)
+
+
+@app.route('/api/v1/log', methods=['POST'])
 def new_log():
     """
     Gets an update from a node in the following schema:
@@ -72,13 +83,7 @@ def new_log():
     except Exception:
         raise InvalidUsage("Couldn't parse data", 422)
 
-    # Compare the node name with the IP's name and discard results that don't
-    # match.
-    client_ip = request.remote_addr
-    client_name = socket.gethostbyaddr(client_ip)[0]
-    if record.name != client_name:
-        raise InvalidUsage(
-            'Info about nodes should be posted by the same node', 403)
+    validate_ip(request.remote_addr, record.name)
 
     # Save the log record.
     log = server.db.log
@@ -109,6 +114,8 @@ def get_logs():
         page = request.args.get('page')
         if page:
             page = int(page)
+        else:
+            page = 1
     except ValueError:
         raise InvalidUsage("Couldn't understand parameters")
 
