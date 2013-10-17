@@ -1,8 +1,8 @@
 from flask import request
 from flask.ext.jsonpify import jsonify
+import socket
 from . import app, server, mongodb
 from .models import Record, Node
-import socket
 
 
 class InvalidUsage(Exception):
@@ -79,8 +79,9 @@ def new_log():
     }
     """
     try:
+        Record.validate_model(request.get_json())
         record = Record(request.get_json())
-    except Exception:
+    except Exception as e:
         raise InvalidUsage("Couldn't parse data", 422)
 
     validate_ip(request.remote_addr, record.name)

@@ -1,5 +1,6 @@
 import dateutil.parser
 from datetime import datetime
+from jsonschema import validate as validate_schema
 
 
 class AttrToItem(object):
@@ -25,6 +26,36 @@ class Result(dict):
 
 
 class Record(dict):
+
+    schema = {
+        'title': 'Log record schema',
+        'type': 'object',
+        'properties': {
+            'created_at': {
+                'description': 'Timestamp of log, formatted in ISO8601',
+                'format': 'date-time',
+                'type': 'string'
+            },
+            'name': {
+                'description': 'Name of node',
+                'format': 'host-name',
+                'type': 'string'
+            },
+            'results': {
+                'items': {
+                    'properties': {
+                        'name': {'type': 'string'},
+                        'path': {'type': 'string'},
+                        'data': {}
+                    },
+                    'required': ['name', 'data']
+                },
+                'type': 'array'
+            }
+        },
+        'required': ['created_at', 'name', 'results']
+    }
+
     created_at = AttrToItem('created_at')
     name = AttrToItem('name')
     results = AttrToItem('results')
@@ -34,6 +65,10 @@ class Record(dict):
         if not isinstance(self.created_at, datetime):
             self.created_at = dateutil.parser.parse(self.created_at)
         self.results = [Result(result) for result in self.results]
+
+    @classmethod
+    def validate_model(cls, s):
+        validate_schema(s, cls.schema)
 
 
 class Node(dict):
