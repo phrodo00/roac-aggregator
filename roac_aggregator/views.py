@@ -1,12 +1,12 @@
 from flask import request
 from flask.ext.jsonpify import jsonify
-from . import app, server
+from . import app, server, mongodb
 from .models import Record, Node
 import socket
 
 
 class InvalidUsage(Exception):
-    status_code = 422
+    status_code = 400
 
     def __init__(self, message, status_code=None, payload=None):
         Exception.__init__(self)
@@ -28,7 +28,7 @@ def handle_invalid_usage(error):
     return response
 
 
-@app.route('/api/v1/log', methods=['POST'])
+@app.route('/api/v1/log/', methods=['POST'])
 def new_log():
     """
     Gets an update from a node in the following schema:
@@ -70,14 +70,12 @@ def new_log():
     try:
         record = Record(request.get_json())
     except Exception:
-        raise InvalidUsage("Couldn't parse data")
+        raise InvalidUsage("Couldn't parse data", 422)
 
     # Compare the node name with the IP's name and discard results that don't
     # match.
     client_ip = request.remote_addr
     client_name = socket.gethostbyaddr(client_ip)[0]
-    app.logger.debug("node_ip: %s, client_name: %s, name: %s",
-                     client_ip, client_name, record.name)
     if record.name != client_name:
         raise InvalidUsage(
             'Info about nodes should be posted by the same node', 403)
@@ -98,3 +96,45 @@ def new_log():
     nodes.save(node)
 
     return jsonify(record)
+
+
+@app.route('/api/v1/logs')
+def get_logs():
+    try:
+        count = request.args.get('count')
+        if count:
+            count = int(count)
+        else:
+            count = 20
+        page = request.args.get('page')
+        if page:
+            page = int(page)
+    except ValueError:
+        raise InvalidUsage("Couldn't understand parameters")
+
+    if page < 1:
+        raise InvalidUsage("Page has to be at least 1")
+
+    app.logger.debug('count: %s', count)
+    log = server.db.log
+    records = log.find().sort('created_at', mongodb.DESCENDING).limit(count)
+    if page:
+        page = page - 1
+        skip = page * count
+    records.skip(skip)
+    return jsonify(records)
+
+
+@app.route('/api/v1/nodes/')
+def get_nodes():
+    nodes_col = server.db.nodes
+    nodes = nodes_col.find(fields={"name": True})
+    nodes = [n["name"] for n in nodes]
+    return jsonify(nodes)
+
+
+@app.route('/api/v1/nodes/<name>')
+def get_node(name):
+    nodes = server.db.nodes
+    node = nodes.find_one({"name": name})
+    return jsonify(node)
