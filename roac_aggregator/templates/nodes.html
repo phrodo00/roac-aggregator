@@ -2,17 +2,25 @@
 {% extends "layout.html" %}
 {% set active_page = "nodes" %}
 {% set subtitle = "Nodes" %}
+
 {% block body %}
 <div class="row">
   <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Nodes
+      </div>
+      <div data-bind="foreach: nodes" class="list-group">
+        <a data-bind="text: $data, css: {active: $root.active_node() == $data}"
+          class="list-group-item" href="#"></a>
+      </div>
+    </div><!--./panel-->
   </div>
   <div class="col-md-8">
-    {% for node in nodes %}
-      {{node.name}}
-      {% for result in node.status %}
-        {{ result }}: {{node.status[result]}}
-      {% endfor %}
-    {% endfor %}
   </div>
 </div>
+{% endblock %}
+
+{% block head %}
+<script src={{url_for('static', filename='js/nodes.js')}}></script>
 {% endblock %}
