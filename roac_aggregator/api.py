@@ -81,7 +81,7 @@ def new_log():
     try:
         Record.validate_model(request.get_json())
         record = Record(request.get_json())
-    except Exception as e:
+    except Exception:
         raise InvalidUsage("Couldn't parse data", 422)
 
     validate_ip(request.remote_addr, record.name)
@@ -123,7 +123,6 @@ def get_logs():
     if page < 1:
         raise InvalidUsage("Page has to be at least 1")
 
-    app.logger.debug('count: %s', count)
     log = server.db.log
     records = log.find().sort('created_at', mongodb.DESCENDING).limit(count)
     if page:
