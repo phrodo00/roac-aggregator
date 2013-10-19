@@ -11,12 +11,19 @@
         Nodes
       </div>
       <div data-bind="foreach: nodes" class="list-group">
-        <a data-bind="text: $data, css: {active: $root.active_node() == $data}"
+        <a data-bind="text: $data, css: {active: $root.selected_node() == $data}"
           class="list-group-item" href="#"></a>
       </div>
     </div><!--./panel-->
   </div>
   <div class="col-md-8">
+    <div class="panel panel-info" data-bind="with: node">
+      <div class="panel-heading" data-bind="text: name">
+      </div>
+      <div class="panel-body">
+        <pre data-bind="text: status_text"></pre>
+      </div>
+    </div><!--./panel-->
   </div>
 </div>
 {% endblock %}
