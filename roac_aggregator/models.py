@@ -24,6 +24,9 @@ class Result(dict):
     path = AttrToItem('path')
     data = AttrToItem('data')
 
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
+
 
 class Record(dict):
 
@@ -60,7 +63,7 @@ class Record(dict):
     name = AttrToItem('name')
     results = AttrToItem('results')
 
-    def __init__(self, mapping):
+    def __init__(self, mapping={}):
         dict.__init__(self, mapping)
         if not isinstance(self.created_at, datetime):
             self.created_at = dateutil.parser.parse(self.created_at)
@@ -69,6 +72,9 @@ class Record(dict):
     @classmethod
     def validate_model(cls, s):
         validate_schema(s, cls.schema)
+
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
 
 
 class Node(dict):
@@ -82,10 +88,5 @@ class Node(dict):
         node.status = {}
         return node
 
-    @classmethod
-    def status_key(cls, key):
-        """Used to delete dots from dictionary keys since mongodb chokes up.
-        """
-        key = key.replace('_', '__')
-        key = key.replace('.', '_')
-        return key
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))

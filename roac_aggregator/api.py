@@ -3,6 +3,7 @@ from flask.ext.jsonpify import jsonify
 import socket
 from . import app, server, mongodb
 from .models import Record, Node
+from .mongodb import prepare_object_keys
 
 
 class InvalidUsage(Exception):
@@ -81,6 +82,8 @@ def new_log():
     try:
         Record.validate_model(request.get_json())
         record = Record(request.get_json())
+        record.results = [prepare_object_keys(r) for r in record.results]
+
     except Exception as e:
         app.logger.exception(e)
         raise InvalidUsage("Couldn't parse data", 422)
@@ -101,8 +104,9 @@ def new_log():
         node = Node.build(record.name)
     else:
         node = Node(node)
-    for result in record.results:
-        node.status[Node.status_key(result.name)] = result.data
+    new_status = prepare_object_keys(
+        dict((result.name, result.data) for result in record.results))
+    node.status.update(new_status)
     nodes.save(node)
 
     return jsonify(record)
