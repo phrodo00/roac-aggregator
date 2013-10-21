@@ -8,6 +8,17 @@ class MongoDB(object):
             self.init_app(app)
 
     def init_app(self, app):
-        self.client = MongoClient(
-            app.config.setdefault('MONGO_HOST', 'localhost',))
-        self.db = self.client[app.config['MONGO_DB']]
+        self.app = app
+
+    @property
+    def client(self):
+        if not hasattr(self, '_client'):
+            self._client = MongoClient(
+                self.app.config.setdefault('MONGO_HOST', 'localhost'))
+        return self._client
+
+    @property
+    def db(self):
+        if not hasattr(self, '_db'):
+            self._db = self.client[self.app.config['MONGO_DB']]
+        return self._db

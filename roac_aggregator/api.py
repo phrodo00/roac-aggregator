@@ -81,10 +81,14 @@ def new_log():
     try:
         Record.validate_model(request.get_json())
         record = Record(request.get_json())
-    except Exception:
+    except Exception as e:
+        app.logger.exception(e)
         raise InvalidUsage("Couldn't parse data", 422)
 
     validate_ip(request.remote_addr, record.name)
+
+    if '_id' in record:
+        del record['_id']
 
     # Save the log record.
     log = server.db.log
@@ -117,7 +121,8 @@ def get_logs():
             page = int(page)
         else:
             page = 1
-    except ValueError:
+    except ValueError as e:
+        app.logger.exception(e)
         raise InvalidUsage("Couldn't understand parameters")
 
     if page < 1:
