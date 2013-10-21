@@ -18,7 +18,10 @@
   </div>
   <div class="col-md-8">
     <div class="panel panel-info" data-bind="with: node">
-      <div class="panel-heading" data-bind="text: name">
+      <div class="panel-heading">
+        <span data-bind="text: name"></span>
+        <button class="btn btn-primary btn-xs" data-bind="click: $parent.update_node">
+          <span class="glyphicon glyphicon-refresh"></span></button>
       </div>
       <div class="panel-body">
         <pre data-bind="text: status_text"></pre>

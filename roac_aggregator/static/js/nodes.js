@@ -17,18 +17,21 @@ $(function() {
         self.update_nodes = function() {
             $.getJSON("/api/v1/nodes", function(data) {
                 self.nodes(data);
-                self.change_node(self.nodes()[0])
+                self.switch_node(self.nodes()[0])
             });
         };
 
-
-        self.change_node = function(node) {
+        self.switch_node = function(node) {
             self.selected_node(node)
             $.getJSON("/api/v1/nodes/" + node, function(data) {
                 var node = new Node(data["name"], data["status"]);
                 self.node(node);
                 console.log(node.status_text());
             });
+        };
+
+        self.update_node = function() {
+            self.switch_node(self.selected_node());
         };
 
         self.update_nodes()
