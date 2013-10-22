@@ -15,7 +15,7 @@
         Nodes
       </div>
       <div data-bind="foreach: nodes" class="list-group">
-        <a data-bind="text: $data, css: {active: $root.selected_node() == $data}"
+        <a data-bind="text: $data, css: {active: $root.selected_node() == $data}, click: $parent.switch_node"
           class="list-group-item" href="#"></a>
       </div>
     </div><!--./panel-->
