@@ -2,3 +2,29 @@
 {% extends "layout.html" %}
 {% set active_page="logs" %}
 {% set subtitle = "Logs" %}
+
+{% block head %}
+<script src={{url_for('static', filename='js/logs.js')}}></script>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <table class="table">
+        <thead>
+          <tr><th>Date</th><th>Time</th><th>Node</th><th>Status</th></tr>
+        </thead>
+        <tbody data-bind="foreach: log">
+        <tr>
+          <td data-bind="text: formated_date"></td>
+          <td data-bind="text: formated_time"></td>
+          <td data-bind="text: name"></td>
+          <td>unimplemented</td>
+        </tr>
+        </tbody>
+      </table>
+    </div><!-- ./panel -->
+  </div>
+</div>
+{% endblock %}

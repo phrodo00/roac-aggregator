@@ -3,6 +3,10 @@
 {% set active_page = "nodes" %}
 {% set subtitle = "Nodes" %}
 
+{% block head %}
+<script src={{url_for('static', filename='js/nodes.js')}}></script>
+{% endblock %}
+
 {% block body %}
 <div class="row">
   <div class="col-md-4">
@@ -29,8 +33,4 @@
     </div><!--./panel-->
   </div>
 </div>
-{% endblock %}
-
-{% block head %}
-<script src={{url_for('static', filename='js/nodes.js')}}></script>
 {% endblock %}
