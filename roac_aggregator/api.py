@@ -7,6 +7,7 @@ from .mongodb import prepare_object_keys
 
 
 class InvalidUsage(Exception):
+    """Exception to throw when a custom HTTP code and json message is wanted"""
     status_code = 400
 
     def __init__(self, message, status_code=None, payload=None):
@@ -35,7 +36,9 @@ def validate_ip(ip, name):
     """
     ip_name = socket.gethostbyaddr(ip)[0]
     ip_name = ip_name.split('.')[0]
-    if ip_name != name:
+    # Raises exception if ip_name and name don't coincide, unless ip starts
+    # with 127, meaning "The connecton is from inside the house".
+    if not ip.startswith('127.') and ip_name != name:
         raise InvalidUsage(
             'Info about nodes should be posted by the same node', 403)
 
