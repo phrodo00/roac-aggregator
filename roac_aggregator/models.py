@@ -1,9 +1,11 @@
 import dateutil.parser
 from datetime import datetime
 from jsonschema import validate as validate_schema
+from collections import Sequence, Mapping
 
 
 class AttrToItem(object):
+    """Descriptor that binds to an object's Items"""
     def __init__(self, item_name):
         self.__name__ = item_name
 
@@ -17,6 +19,22 @@ class AttrToItem(object):
 
     def __delete__(self, obj):
         del obj[self.__name__]
+
+
+class SeqAttrToItem(AttrToItem):
+    """Validates that set values are Sequences"""
+    def __set__(self, obj, value):
+        if not isinstance(value, Sequence):
+            raise TypeError("value should be a sequence")
+        AttrToItem.__set__(self, obj, value)
+
+
+class MapAttrToItem(AttrToItem):
+    """Validates that set values are Mappings"""
+    def __set__(self, obj, value):
+        if not isinstance(value, Mapping):
+            raise TypeError("value should be a mapping")
+        AttrToItem.__set__(self, obj, value)
 
 
 class Result(dict):
@@ -61,7 +79,7 @@ class Record(dict):
 
     created_at = AttrToItem('created_at')
     name = AttrToItem('name')
-    results = AttrToItem('results')
+    results = SeqAttrToItem('results')
 
     def __init__(self, mapping={}):
         dict.__init__(self, mapping)
@@ -79,7 +97,7 @@ class Record(dict):
 
 class Node(dict):
     name = AttrToItem('name')
-    status = AttrToItem('status')
+    status = MapAttrToItem('status')
 
     @classmethod
     def build(cls, name):
