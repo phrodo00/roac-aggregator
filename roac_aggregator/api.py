@@ -113,7 +113,9 @@ def new_log():
     node.status.update(new_status)
     nodes.save(node)
 
-    return jsonify(record)
+    response = jsonify(record)
+    response.status = "201 CREATED"
+    return response
 
 
 @app.route('/api/v1/logs')
@@ -157,6 +159,8 @@ def get_nodes():
 def get_node(name):
     nodes = server.db.nodes
     node = nodes.find_one({"name": name})
+    if node is None:
+        raise InvalidUsage('Node not found', 404)
     return jsonify(node)
 
 
