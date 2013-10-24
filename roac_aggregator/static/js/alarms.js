@@ -14,10 +14,18 @@ $(function() {
 
     function Alarm() {
         var self = this;
-        self.new_criteria = ko.observable(new Criteria('', '', ''));
         self.criteria = ko.observableArray([]);
         self.action = ko.observable(new Action('mail', ['']));
         self._id = ko.observable()
+
+        self.add_criterion = function() {
+            self.criteria.push(new Criteria("", "==", ""));
+            console.log("asdf");
+        }
+
+        self.remove_criterion = function(criterion) {
+            self.criteria.remove(criterion);
+        }
     }
 
     function AlarmsModel() {
@@ -45,6 +53,15 @@ $(function() {
 
         self.save_alarms = function() {
             console.log(ko.toJSON(self.alarms));
+        }
+
+        self.add_alarm = function() {
+            a = new Alarm()
+            self.alarms.push(a);
+        }
+
+        self.remove_alarm = function(alarm) {
+            self.alarms.destroy(alarm);// Doesn't actually delete, but marks for deletion
         }
 
         self.update_alarms();

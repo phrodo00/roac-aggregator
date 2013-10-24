@@ -8,49 +8,60 @@
 
 
 {% block body %}
+<div class="btn-group">
+  <button class="btn btn-default" data-bind="click: add_alarm">
+    <span class="glyphicon glyphicon-plus"></span> New rule</button>
+  <button class="btn btn-primary" data-bind="click: save_alarms">Save</button>
+</div>
+
+<hr/>
+
 <div data-bind="foreach: alarms">
   <div class="panel panel-default">
-    <div class="panel-body" data-bind="with: new_criteria">
-        <div class="row">
-          <div class="col-md-5">
-            <input class="form-control" data-bind="value: path"/>
-          </div>
-          <div class="col-md-2">
-            <input class="form-control" data-bind="value: operator"/>
-          </div>
-          <div class="col-md-4">
-            <input class="form-control" data-bind="value: value"/>
-          </div>
+    <div class="panel-body" >
+      <div class="row form-horizontal">
+        <div class="col-md-1 text-right">
+          <label class="control-label">Action</label>
         </div>
-    </div>
-    <ul class="list-group"data-bind="foreach: criteria">
-      <li class="list-group-item">
-        <div class="row">
-          <div class="col-md-5">
-            <input class="form-control" data-bind="value: path"/>
-          </div>
-          <div class="col-md-2">
-            <select class="form-control" data-bind="value: operator, options: $root.oper_possib"></select>
-          </div>
-          <div class="col-md-4">
-            <input class="form-control" data-bind="value: value"/>
-          </div>
+        <div class="col-md-3" data-bind="with: action">
+          <select class="form-control input-sm" data-bind="value: type, options: $root.action_possib"></select>
         </div>
-      </li>
-    </ul>
-    <div class="panel-body" data-bind="with: action">
-      <div class="row">
-        <div class="col-md-5">
-          <select class="form-control" data-bind="value: type, options: $root.action_possib"></select>
+        <div class="col-md-6" data-bind="with: action">
+          <input class="form-control input-sm" data-bind="value: parameters()[0]"/>
         </div>
-        <div class="col-md-4">
-          <input class="form-control" data-bind="value: parameters()[0]"/>
+        <div class="col-md-2">
+          <div class="btn-group pull-right">
+            <button class="btn btn-default btn-sm" data-bind="click: add_criterion">
+              <span class="glyphicon glyphicon-plus-sign"></span> New criterium
+            </button>
+            <button class="btn btn-danger btn-sm" data-bind="click: $parent.remove_alarm">
+              <span class="glyphicon glyphicon-trash"></span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
+    <ul class="list-group" data-bind="foreach: criteria">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-5">
+            <input class="form-control input-sm" data-bind="value: path"/>
+          </div>
+          <div class="col-md-2">
+            <select class="form-control input-sm" data-bind="value: operator, options: $root.oper_possib"></select>
+          </div>
+          <div class="col-md-4">
+            <input class="form-control input-sm" data-bind="value: value"/>
+          </div>
+          <div class="col-md-1">
+            <button class="btn btn-danger btn-xs pull-right" data-bind="click: $parent.remove_criterion">
+              <span class="glyphicon glyphicon-minus-sign"></span></button>
+          </div>
+        </div>
+      </li>
+    </ul><!--./list-group-->
   </div><!--./foreach-->
 </div><!--./foreach-->
 
-<button class="btn btn-primary" data-bind="click: save_alarms">Save</button>
 
 {% endblock %}
