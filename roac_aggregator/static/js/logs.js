@@ -30,7 +30,6 @@ $(function() {
           created_at = new Date(Date.parse(record.created_at));
           return new Record(record.name, created_at, record.results);
         });
-        console.log(mappedRecords)
         self.log(mappedRecords)
       });
     };

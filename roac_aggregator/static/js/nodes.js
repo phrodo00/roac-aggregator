@@ -26,7 +26,6 @@ $(function() {
             $.getJSON("/api/v1/nodes/" + node, function(data) {
                 var node = new Node(data["name"], data["status"]);
                 self.node(node);
-                console.log(node.status_text());
             });
         };
 
