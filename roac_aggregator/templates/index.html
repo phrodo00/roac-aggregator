@@ -12,7 +12,7 @@
     <div class="panel panel-default">
       <table class="table">
         <thead>
-          <tr><th>Date</th><th>Time</th><th>Node</th><th>Status</th></tr>
+          <tr><th>Date</th><th>Time</th><th>Node</th><th>Status</th><th></th></tr>
         </thead>
         <tbody data-bind="foreach: log">
         <tr>
@@ -20,10 +20,29 @@
           <td data-bind="text: formated_time"></td>
           <td data-bind="text: name"></td>
           <td>unimplemented</td>
+          <td>
+            <button class="btn btn-link btn-sm" data-bind="click: show_info">
+              <span class="glyphicon glyphicon-eye-open"></span></button>
+          </td>
         </tr>
         </tbody>
       </table>
     </div><!-- ./panel -->
   </div>
 </div>
+{% endblock %}
+
+{% block footer %}
+<div class="modal fade" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <pre data-bind="text: info_text"></pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 {% endblock %}
