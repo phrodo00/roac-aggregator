@@ -2,8 +2,9 @@ from flask import request
 from flask.ext.jsonpify import jsonify
 import socket
 from . import app, server, mongodb
-from .models import Record, Node
+from .models import Record, Node, Alarm, Criteria, Action
 from .mongodb import prepare_object_keys
+from bson.objectid import ObjectId
 
 
 class InvalidUsage(Exception):
@@ -157,3 +158,43 @@ def get_node(name):
     nodes = server.db.nodes
     node = nodes.find_one({"name": name})
     return jsonify(node)
+
+
+@app.route('/api/v1/alarms/')
+def get_alarms():
+    collection = server.db.alarms
+    alarms = collection.find()
+    return jsonify(alarms)
+
+
+@app.route('/api/v1/alarms/', methods=['POST'])
+def post_alarms():
+    try:
+        alarms = []
+        for alarm in request.get_json():
+            Alarm.validate_model(alarm)
+            alarm = Alarm(alarm)
+            alarm.criteria = [Criteria(x) for x in alarm.criteria]
+            alarm.action = Action(alarm.action)
+            alarms.append(alarm)
+    except Exception as e:
+        app.logger.exception(e)
+        raise InvalidUsage("Couldn't parse data", 422)
+
+    collection = server.db.alarms
+    for alarm in alarms:
+        collection.save(alarm)
+
+    app.logger.debug('%r', alarms)
+    return jsonify(alarms)
+
+
+@app.route('/api/v1/alarms/<id>', methods=['DELETE'])
+def delete_alarm(id):
+    id = ObjectId(id)
+    alarms = server.db.alarms
+    alarm = alarms.find_one({'_id': id})
+    if alarm is None:
+        raise InvalidUsage('Alarm not found', 404)
+    alarms.remove(id)
+    return jsonify({'message': 'done'})

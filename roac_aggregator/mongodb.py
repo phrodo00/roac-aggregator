@@ -1,5 +1,4 @@
-from pymongo import MongoClient
-from pymongo import ASCENDING, DESCENDING
+from pymongo import MongoClient, ASCENDING, DESCENDING
 from collections import MutableMapping, MutableSequence
 
 

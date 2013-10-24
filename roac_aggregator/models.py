@@ -2,6 +2,7 @@ import dateutil.parser
 from datetime import datetime
 from jsonschema import validate as validate_schema
 from collections import Sequence, Mapping
+from . import alarms
 
 
 class AttrToItem(object):
@@ -46,7 +47,17 @@ class Result(dict):
         return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
 
 
-class Record(dict):
+class JsonSchema(object):
+    """Provides a validate_model that check an object hierarchy against the
+    json-schema defined in the schema class variable"""
+    schema = None
+
+    @classmethod
+    def validate_model(cls, s):
+        validate_schema(s, cls.schema)
+
+
+class Record(dict, JsonSchema):
 
     schema = {
         'title': 'Log record schema',
@@ -87,10 +98,6 @@ class Record(dict):
             self.created_at = dateutil.parser.parse(self.created_at)
         self.results = [Result(result) for result in self.results]
 
-    @classmethod
-    def validate_model(cls, s):
-        validate_schema(s, cls.schema)
-
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
 
@@ -108,3 +115,71 @@ class Node(dict):
 
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
+
+
+class Alarm(dict, JsonSchema):
+    schema = {
+        'title': 'Alarm criteria',
+        'type': 'object',
+        'properties': {
+            'criteria': {
+                'type': 'array',
+                'items': {
+                    'type': 'object',
+                    'properties': {
+                        'path': {'type': 'string'},
+                        'operator': {'type': 'string'},
+                        'value': {'type': ['string', 'number']}
+                    },
+                    'required': ['path', 'operator', 'value']
+                }
+            },
+            'action': {
+                'type': 'object',
+                'properties': {
+                    'type': {'type': 'string'},
+                    'parameters': {
+                        'type': 'array',
+                        'items': {'type': 'string'}
+                    }
+                },
+                'required': ['type', 'parameters']
+            }
+        },
+        'required': ['criteria', 'action']
+    }
+
+    criteria = SeqAttrToItem('criteria')
+    action = AttrToItem('action')
+
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
+
+
+class Criteria(dict):
+    operators = ['gt', 'lt', 'gte', 'lte', '==']
+
+    path = AttrToItem('path')
+    operator = AttrToItem('operator')
+    value = AttrToItem('value')
+
+    def valid(self):
+        """Operator has to be one of the strings in operators, and if value is
+        a string, it can only be '=='
+        """
+        if self.operator not in self.operators:
+            return False
+        if isinstance(self.value, basestring) and self.operator != '==':
+            return False
+        return True
+
+
+class Action(dict):
+    type_ = AttrToItem('type')
+    parameters = SeqAttrToItem('parameters')
+
+    def valid(self):
+        if type not in alarms.available_actions:
+            return False
+        else:
+            return True
