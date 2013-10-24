@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% set active_page = "alarms" %}
+{% set subtitle = "Alarms" %}
+
+{% block head %}
+<script src={{url_for('static', filename='js/alarms.js')}}></script>
+{% endblock %}
+
+
+{% block body %}
+<div data-bind="foreach: alarms">
+  <div class="panel panel-default">
+    <div class="panel-body" data-bind="with: new_criteria">
+        <div class="row">
+          <div class="col-md-5">
+            <input class="form-control" data-bind="value: path"/>
+          </div>
+          <div class="col-md-2">
+            <input class="form-control" data-bind="value: operator"/>
+          </div>
+          <div class="col-md-4">
+            <input class="form-control" data-bind="value: value"/>
+          </div>
+        </div>
+    </div>
+    <ul class="list-group"data-bind="foreach: criteria">
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-md-5">
+            <input class="form-control" data-bind="value: path"/>
+          </div>
+          <div class="col-md-2">
+            <input class="form-control" data-bind="value: operator"/>
+          </div>
+          <div class="col-md-4">
+            <input class="form-control" data-bind="value: value"/>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="panel-body" data-bind="with: action">
+      <div class="row">
+        <div class="col-md-5">
+          <input class="form-control" data-bind="value: type"/>
+        </div>
+        <div class="col-md-4">
+          <input class="form-control" data-bind="value: parameters()[0]"/>
+        </div>
+      </div>
+    </div>
+  </div><!--./foreach-->
+</div><!--./foreach-->
+
+<button class="btn btn-primary" data-bind="click: save_alarms">Save</button>
+
+{% endblock %}

@@ -10,3 +10,8 @@ def nodes():
 @app.route('/')
 def logs():
     return render_template('index.html')
+
+
+@app.route('/alarms')
+def list_alarms():
+    return render_template('alarms.html')

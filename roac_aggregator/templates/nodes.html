@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 {% extends "layout.html" %}
 {% set active_page = "nodes" %}
 {% set subtitle = "Nodes" %}
@@ -24,7 +23,7 @@
     <div class="panel panel-info" data-bind="with: node">
       <div class="panel-heading">
         <span data-bind="text: name"></span>
-        <button class="btn btn-primary btn-xs" data-bind="click: $parent.update_node">
+        <button class="btn btn-primary btn-xs pull-right" data-bind="click: $parent.update_node">
           <span class="glyphicon glyphicon-refresh"></span></button>
       </div>
       <div class="panel-body">

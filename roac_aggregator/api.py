@@ -178,6 +178,8 @@ def post_alarms():
         for alarm in request.get_json():
             Alarm.validate_model(alarm)
             alarm = Alarm(alarm)
+            if '_id' in alarm:
+                alarm['_id'] = ObjectId(alarm['_id'])
             alarm.criteria = [Criteria(x) for x in alarm.criteria]
             alarm.action = Action(alarm.action)
             alarms.append(alarm)
