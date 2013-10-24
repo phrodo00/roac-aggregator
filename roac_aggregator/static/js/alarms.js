@@ -24,6 +24,9 @@ $(function() {
         var self = this;
         self.alarms = ko.observableArray([]);
 
+        self.action_possib = ko.observableArray(['mail']);
+        self.oper_possib = ko.observableArray(['gt', 'gte', 'lt', 'lte', '=='])
+
         self.update_alarms = function() {
             $.getJSON('/api/v1/alarms/', function(data) {
                 alarms = $.map(data, function(alarm) {

@@ -30,7 +30,7 @@
             <input class="form-control" data-bind="value: path"/>
           </div>
           <div class="col-md-2">
-            <input class="form-control" data-bind="value: operator"/>
+            <select class="form-control" data-bind="value: operator, options: $root.oper_possib"></select>
           </div>
           <div class="col-md-4">
             <input class="form-control" data-bind="value: value"/>
@@ -41,7 +41,7 @@
     <div class="panel-body" data-bind="with: action">
       <div class="row">
         <div class="col-md-5">
-          <input class="form-control" data-bind="value: type"/>
+          <select class="form-control" data-bind="value: type, options: $root.action_possib"></select>
         </div>
         <div class="col-md-4">
           <input class="form-control" data-bind="value: parameters()[0]"/>
