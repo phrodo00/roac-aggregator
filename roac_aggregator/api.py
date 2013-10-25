@@ -187,12 +187,20 @@ def post_alarms():
         app.logger.exception(e)
         raise InvalidUsage("Couldn't parse data", 422)
 
+    delete_alarms = [alarm for alarm in alarms if
+                     '_destroy' in alarm and alarm['_destroy']]
+
+    save_alarms = [alarm for alarm in alarms if '_destroy' not in alarm]
+
     collection = server.db.alarms
-    for alarm in alarms:
+    for alarm in save_alarms:
         collection.save(alarm)
 
-    app.logger.debug('%r', alarms)
-    return jsonify(alarms)
+    for alarm in delete_alarms:
+        if '_id' in alarm:  # No _id means it wasn't in the DB anyways.
+            collection.remove(alarm['_id'])
+
+    return jsonify(save_alarms)
 
 
 @app.route('/api/v1/alarms/<id>', methods=['DELETE'])

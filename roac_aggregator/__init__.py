@@ -8,7 +8,7 @@ app = Flask(__name__.split('.')[0])
 
 SECRET_KEY = "development key"
 DEBUG = True
-MONGO_DB = 'roac'
+MONGO_DBNAME = 'roac'
 
 app.config.from_object(__name__)
 

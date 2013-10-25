@@ -22,7 +22,7 @@ class MongoDB(object):
     @property
     def db(self):
         if not hasattr(self, '_db'):
-            self._db = self.client[self.app.config['MONGO_DB']]
+            self._db = self.client[self.app.config['MONGO_DBNAME']]
         return self._db
 
 

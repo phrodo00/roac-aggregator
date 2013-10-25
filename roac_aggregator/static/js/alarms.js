@@ -20,7 +20,6 @@ $(function() {
 
         self.add_criterion = function() {
             self.criteria.push(new Criteria("", "==", ""));
-            console.log("asdf");
         }
 
         self.remove_criterion = function(criterion) {
@@ -35,24 +34,30 @@ $(function() {
         self.action_possib = ko.observableArray(['mail']);
         self.oper_possib = ko.observableArray(['gt', 'gte', 'lt', 'lte', '=='])
 
-        self.update_alarms = function() {
-            $.getJSON('/api/v1/alarms/', function(data) {
-                alarms = $.map(data, function(alarm) {
-                    a = new Alarm();
-                    a.criteria($.map(alarm.criteria, function(criteria) {
-                        return new Criteria(criteria.path,
-                                            criteria.operator, criteria.value);
-                    }));
-                    a.action(new Action(alarm.action.type, alarm.action.parameters));
-                    a._id(alarm._id);
-                    return a;
-                });
-                self.alarms(alarms)
+        self.read_from_jsom_array = function(data) {
+            alarms = $.map(data, function(alarm) {
+                a = new Alarm();
+                a.criteria($.map(alarm.criteria, function(criteria) {
+                    return new Criteria(criteria.path,
+                                        criteria.operator, criteria.value);
+                }));
+                a.action(new Action(alarm.action.type, alarm.action.parameters));
+                a._id(alarm._id);
+                return a;
             });
+            self.alarms(alarms);
+        }
+
+        self.update_alarms = function() {
+            $.getJSON('/api/v1/alarms/', self.read_from_jsom_array);
         }
 
         self.save_alarms = function() {
-            console.log(ko.toJSON(self.alarms));
+            $.ajax("/api/v1/alarms/", {
+                data: ko.toJSON(self.alarms),
+                type: "post", contentType: "application/json",
+                success: self.read_from_jsom_array
+            });
         }
 
         self.add_alarm = function() {
