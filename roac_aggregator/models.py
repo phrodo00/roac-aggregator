@@ -3,6 +3,7 @@ from datetime import datetime
 from jsonschema import validate as validate_schema
 from collections import Sequence, Mapping
 from . import alarms
+from bson.objectid import ObjectId
 
 
 class AttrToItem(object):
@@ -92,11 +93,13 @@ class Record(dict, JsonSchema):
     name = AttrToItem('name')
     results = SeqAttrToItem('results')
 
-    def __init__(self, mapping={}):
-        dict.__init__(self, mapping)
-        if not isinstance(self.created_at, datetime):
-            self.created_at = dateutil.parser.parse(self.created_at)
-        self.results = [Result(result) for result in self.results]
+    @classmethod
+    def load(cls, data):
+        record = cls(data)
+        if not isinstance(record.created_at, datetime):
+            record.created_at = dateutil.parser.parse(record.created_at)
+        record.results = [Result(result) for result in record.results]
+        return record
 
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
@@ -155,6 +158,15 @@ class Alarm(dict, JsonSchema):
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
 
+    @classmethod
+    def load(cls, data):
+        alarm = cls(data)
+        if '_id' in alarm:
+            alarm['_id'] = ObjectId(alarm['_id'])
+        alarm.criteria = [Criteria(x) for x in alarm.criteria]
+        alarm.action = Action(alarm.action)
+        return alarm
+
     def valid(self):
         valid_criteria = reduce(lambda x, y: x and y, [criterium.valid() for
                                 criterium in self.criteria])
@@ -162,7 +174,7 @@ class Alarm(dict, JsonSchema):
 
 
 class Criteria(dict):
-    operators = ['gt', 'lt', 'gte', 'lte', '==']
+    operators = ['gt', 'lt', 'gte', 'lte', '==', 'ne']
 
     path = AttrToItem('path')
     operator = AttrToItem('operator')

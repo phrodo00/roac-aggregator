@@ -32,7 +32,7 @@ $(function() {
         self.alarms = ko.observableArray([]);
 
         self.action_possib = ko.observableArray(['mail']);
-        self.oper_possib = ko.observableArray(['gt', 'gte', 'lt', 'lte', '=='])
+        self.oper_possib = ko.observableArray(['gt', 'gte', 'lt', 'lte', '==', 'ne'])
 
         self.read_from_jsom_array = function(data) {
             alarms = $.map(data, function(alarm) {

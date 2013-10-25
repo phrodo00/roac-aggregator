@@ -2,7 +2,7 @@ from flask import request
 from flask.ext.jsonpify import jsonify
 import socket
 from . import app, server, mongodb
-from .models import Record, Node, Alarm, Criteria, Action
+from .models import Record, Node, Alarm
 from .mongodb import prepare_object_keys
 from bson.objectid import ObjectId
 
@@ -85,7 +85,7 @@ def new_log():
     """
     try:
         Record.validate_model(request.get_json())
-        record = Record(request.get_json())
+        record = Record.load(request.get_json())
         record.results = [prepare_object_keys(r) for r in record.results]
 
     except Exception as e:
@@ -176,13 +176,7 @@ def post_alarms():
     try:
         alarms = []
         for alarm in request.get_json():
-            Alarm.validate_model(alarm)
-            alarm = Alarm(alarm)
-            if '_id' in alarm:
-                alarm['_id'] = ObjectId(alarm['_id'])
-            alarm.criteria = [Criteria(x) for x in alarm.criteria]
-            alarm.action = Action(alarm.action)
-            alarms.append(alarm)
+            alarms.append(Alarm.load(alarm))
     except Exception as e:
         app.logger.exception(e)
         raise InvalidUsage("Couldn't parse data", 422)
