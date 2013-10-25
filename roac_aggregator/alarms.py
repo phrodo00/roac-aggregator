@@ -1,1 +1,1 @@
-available_actions = ['mail', 'command']
+available_actions = ['mail']

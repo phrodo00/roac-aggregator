@@ -155,6 +155,11 @@ class Alarm(dict, JsonSchema):
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
 
+    def valid(self):
+        valid_criteria = reduce(lambda x, y: x and y, [criterium.valid() for
+                                criterium in self.criteria])
+        return valid_criteria and self.action.valid()
+
 
 class Criteria(dict):
     operators = ['gt', 'lt', 'gte', 'lte', '==']
@@ -179,7 +184,7 @@ class Action(dict):
     parameters = SeqAttrToItem('parameters')
 
     def valid(self):
-        if type not in alarms.available_actions:
+        if self.type_ not in alarms.available_actions:
             return False
         else:
             return True

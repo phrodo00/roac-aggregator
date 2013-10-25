@@ -190,7 +190,8 @@ def post_alarms():
     delete_alarms = [alarm for alarm in alarms if
                      '_destroy' in alarm and alarm['_destroy']]
 
-    save_alarms = [alarm for alarm in alarms if '_destroy' not in alarm]
+    save_alarms = [alarm for alarm in alarms if '_destroy' not in alarm and
+                   alarm.valid()]  # TODO: Inform of invalid stuff.
 
     collection = server.db.alarms
     for alarm in save_alarms:
