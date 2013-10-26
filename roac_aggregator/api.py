@@ -1,10 +1,13 @@
 from flask import request
 from flask.ext.jsonpify import jsonify
+
 import socket
+from bson.objectid import ObjectId
+
 from . import app, server, mongodb
 from .models import Record, Node, Alarm
 from .mongodb import prepare_object_keys
-from bson.objectid import ObjectId
+from .alarms import run_alarms
 
 
 class InvalidUsage(Exception):
@@ -113,12 +116,15 @@ def new_log():
     node.status.update(new_status)
     nodes.save(node)
 
+    #check alarms on node
+    run_alarms(node)
+
     response = jsonify(record)
     response.status = "201 CREATED"
     return response
 
 
-@app.route('/api/v1/logs')
+@app.route('/api/v1/logs/')
 def get_logs():
     try:
         count = request.args.get('count')

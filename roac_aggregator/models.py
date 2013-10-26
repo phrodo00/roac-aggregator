@@ -2,7 +2,7 @@ import dateutil.parser
 from datetime import datetime
 from jsonschema import validate as validate_schema
 from collections import Sequence, Mapping
-from . import alarms
+from . import alarm_handlers
 from bson.objectid import ObjectId
 
 
@@ -186,8 +186,6 @@ class Criteria(dict):
         """
         if self.operator not in self.operators:
             return False
-        if isinstance(self.value, basestring) and self.operator != '==':
-            return False
         return True
 
 
@@ -196,7 +194,7 @@ class Action(dict):
     parameters = SeqAttrToItem('parameters')
 
     def valid(self):
-        if self.type_ not in alarms.available_actions:
+        if self.type_ not in alarm_handlers.available_actions:
             return False
         else:
             return True
