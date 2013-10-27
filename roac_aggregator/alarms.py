@@ -2,6 +2,7 @@ from collections import Mapping, Sequence, deque
 from numbers import Number
 from . import server, app
 from .models import Alarm
+from .alarm_handlers import handle_alarm
 
 
 # Don't want to put too much stuff in the alarm class, so it'll all be handled
@@ -17,6 +18,7 @@ def run_alarms(node):
         alarm = Alarm.load(alarm)
         if evaluate_alarm(alarm, node):
             app.logger.debug('Alarm match! %r', alarm)
+            handle_alarm(alarm, node)
 
 
 def evaluate_alarm(alarm, node):

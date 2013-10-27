@@ -2,6 +2,7 @@
 from flask import Flask
 from .json import JSONEncoder
 from .mongodb import MongoDB
+from flask.ext.mail import Mail
 
 
 app = Flask(__name__.split('.')[0], instance_relative_config=True)
@@ -15,6 +16,7 @@ app.json_encoder = JSONEncoder
 
 
 server = MongoDB(app)
+mail = Mail(app)
 
 
 from . import api, content

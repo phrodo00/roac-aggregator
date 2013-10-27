@@ -1,2 +1,9 @@
+# vim: ft=python
 MONGO_DBNAME='roac'
 MONGO_HOST='localhost'
+MAIL_SERVER='smtp.gmail.com'
+MAIL_PORT=465
+MAIL_USE_SSL=True
+MAIL_USERNAME='@gmail.com'
+MAIL_PASSWORD=''
+MAIL_DEFAULT_SENDER='@gmail.com'
