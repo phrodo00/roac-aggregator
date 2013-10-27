@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+from __future__ import absolute_import
 from flask import Flask
 from .json import JSONEncoder
 from .mongodb import MongoDB

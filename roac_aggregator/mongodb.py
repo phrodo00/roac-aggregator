@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from pymongo import MongoClient, ASCENDING, DESCENDING
 from collections import MutableMapping, MutableSequence
 

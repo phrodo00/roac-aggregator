@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import dateutil.parser
 from datetime import datetime
 from jsonschema import validate as validate_schema

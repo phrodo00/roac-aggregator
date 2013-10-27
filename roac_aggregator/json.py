@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from flask import json as flask_json
 from bson.objectid import ObjectId
 from pymongo.cursor import Cursor
