@@ -9,7 +9,7 @@
 {% block body %}
 <div class="row">
   <div class="col-md-4">
-    <div class="panel panel-default">
+    <div class="panel panel-default" id="list">
       <div class="panel-heading">
         Nodes
       </div>
@@ -20,14 +20,20 @@
     </div><!--./panel-->
   </div>
   <div class="col-md-8">
-    <div class="panel panel-info" data-bind="with: node">
+    <div class="panel panel-info" data-bind="with: node" id="details">
       <div class="panel-heading">
         <span data-bind="text: name"></span>
-        <button class="btn btn-primary btn-xs pull-right" data-bind="click: $parent.update_node">
+        <button class="btn btn-primary btn-xs pull-right"
+          data-bind="click: $parent.update_node">
           <span class="glyphicon glyphicon-refresh"></span></button>
       </div>
+      <table class="table">
+        <tbody>
+        <tr><td>Last update:</td><td data-bind="text: formatted_updated_at"></td></tr>
+        </tbody>
+      </table>
       <div class="panel-body">
-        <pre data-bind="text: status_text"></pre>
+        <pre data-bind="text: status_text, highlight:1"></pre>
       </div>
     </div><!--./panel-->
   </div>

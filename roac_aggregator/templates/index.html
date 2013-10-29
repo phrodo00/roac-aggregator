@@ -10,7 +10,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="panel panel-default">
-      <table class="table">
+      <table class="table table-stripped table-hover">
         <thead>
           <tr><th>Date</th><th>Time</th><th>Node</th><th>Status</th><th></th></tr>
         </thead>
@@ -37,7 +37,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-body">
-        <pre data-bind="text: info_text"></pre>
+        <pre data-bind="text: info_text, highlight:1"></pre>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
