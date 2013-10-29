@@ -10,6 +10,8 @@ from .models import Record, Node, Alarm
 from .mongodb import prepare_object_keys
 from .alarms import run_alarms
 
+from datetime import datetime
+
 
 class InvalidUsage(Exception):
     """Exception to throw when a custom HTTP code and json message is wanted"""
@@ -112,13 +114,21 @@ def new_log():
         node = Node.build(record.name)
     else:
         node = Node(node)
-    new_status = prepare_object_keys(
-        dict((result.name, result.data) for result in record.results))
-    node.status.update(new_status)
-    nodes.save(node)
 
-    #check alarms on node
-    run_alarms(node)
+    if 'updated_at' not in node or (
+        'updated_at' in node and record.created_at > node.updated_at):
+        new_status = prepare_object_keys(
+            dict((result.name, result.data) for result in record.results))
+        node.status.update(new_status)
+
+        # Update updated_at field
+        node.updated_at = datetime.utcnow()
+
+        # Save node
+        nodes.save(node)
+
+        #check alarms on node
+        run_alarms(node)
 
     response = jsonify(record)
     response.status = "201 CREATED"

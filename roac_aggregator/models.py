@@ -109,6 +109,7 @@ class Record(dict, JsonSchema):
 class Node(dict):
     name = AttrToItem('name')
     status = MapAttrToItem('status')
+    updated_at = AttrToItem('updated_at')
 
     @classmethod
     def build(cls, name):

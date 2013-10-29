@@ -27,11 +27,10 @@
           data-bind="click: $parent.update_node">
           <span class="glyphicon glyphicon-refresh"></span></button>
       </div>
-      <table class="table">
-        <tbody>
-        <tr><td>Last update:</td><td data-bind="text: formatted_updated_at"></td></tr>
-        </tbody>
-      </table>
+      <dl class="dl-horizontal">
+        <dt>Last update</dt><dd data-bind="text: formatted_updated_at"></dd>
+      </dl>
+      <hr/>
       <div class="panel-body">
         <pre data-bind="text: status_text, highlight:1"></pre>
       </div>

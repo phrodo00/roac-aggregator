@@ -1,11 +1,27 @@
 $(function() {
-    function Node(name, status_) {
+    function Node(name, status_, updated_at) {
         var self = this;
         self.name = ko.observable(name);
         self.status_ = ko.observable(status_);
+        self.updated_at = ko.observable(updated_at);
+
         self.status_text = ko.computed(function() {
             return JSON.stringify(self.status_(), undefined, 2);
         });
+
+        self.formatted_updated_at = ko.computed(function() {
+          if(self.updated_at()) {
+            days    = self.updated_at().getDate();
+            month   = self.updated_at().getMonth() + 1;
+            year    = self.updated_at().getFullYear();
+            seconds = self.updated_at().getSeconds();
+            minutes = self.updated_at().getMinutes();
+            hours   = self.updated_at().getHours();
+            return year+"-"+month+"-"+days+ " " +hours+":"+minutes+":"+seconds
+          }
+          return "Not defined"
+        });
+
     }
 
     function NodesModel() {
@@ -24,8 +40,12 @@ $(function() {
         self.switch_node = function(node) {
             self.selected_node(node)
             $.getJSON("/api/v1/nodes/" + node, function(data) {
-                var node = new Node(data["name"], data["status"]);
-                self.node(node);
+              var updated_at = Date.parse(data["updated_at"]);
+              if(updated_at) {
+                updated_at = new Date(updated_at);
+              }
+              var node = new Node(data.name, data.status, updated_at);
+              self.node(node);
             });
         };
 
