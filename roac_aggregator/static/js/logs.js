@@ -1,25 +1,4 @@
 $(function() {
-  function Record(name, created_at, results) {
-    var self = this;
-    self.name = ko.observable(name);
-    self.created_at = ko.observable(created_at);
-    self.results = ko.observableArray(results);
-
-    self.formated_date = ko.computed(function() {
-      date = self.created_at().getDate();
-      month = self.created_at().getMonth() + 1;
-      year = self.created_at().getFullYear();
-      return year + '-' + month + '-' + date;
-    });
-
-    self.formated_time = ko.computed(function() {
-      seconds = self.created_at().getSeconds();
-      minutes = self.created_at().getMinutes();
-      hours = self.created_at().getHours();
-      return hours + ':' + minutes + ':' + seconds;
-    });
-  }
-
   function LogModel() {
     self.log = ko.observableArray([]);
     self.info = ko.observable();

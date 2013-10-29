@@ -1,32 +1,4 @@
 $(function() {
-    function Criteria(path, operator, value) {
-        var self = this;
-        self.path = ko.observable(path);
-        self.operator = ko.observable(operator);
-        self.value = ko.observable(value);
-    }
-
-    function Action(type, params) {
-        var self = this;
-        self.type = ko.observable(type);
-        self.parameters = ko.observableArray(params);
-    }
-
-    function Alarm() {
-        var self = this;
-        self.criteria = ko.observableArray([]);
-        self.action = ko.observable(new Action('mail', ['']));
-        self._id = ko.observable()
-
-        self.add_criterion = function() {
-            self.criteria.push(new Criteria("", "==", ""));
-        }
-
-        self.remove_criterion = function(criterion) {
-            self.criteria.remove(criterion);
-        }
-    }
-
     function AlarmsModel() {
         var self = this;
         self.alarms = ko.observableArray([]);
