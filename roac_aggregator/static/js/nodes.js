@@ -7,14 +7,17 @@ $(function() {
 
         self.update_nodes = function() {
             $.getJSON("/api/v1/nodes", function(data) {
-                self.nodes(data);
+                var nodes = $.map(data, function(n) {
+                    return new NodeLink(n.name, n.url);
+                });
+                self.nodes(nodes);
                 self.switch_node(self.nodes()[0])
             });
         };
 
         self.switch_node = function(node) {
             self.selected_node(node)
-            $.getJSON("/api/v1/nodes/" + node, function(data) {
+            $.getJSON(node.url(), function(data) {
               var updated_at = Date.parse(data["updated_at"]);
               if(updated_at) {
                 updated_at = new Date(updated_at);

@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from flask import request
+from flask import request, url_for
 from flask.ext.jsonpify import jsonify
 
 import socket
@@ -116,7 +116,8 @@ def new_log():
         node = Node(node)
 
     if 'updated_at' not in node or (
-        'updated_at' in node and record.created_at > node.updated_at):
+            'updated_at' in node and record.created_at > node.updated_at):
+
         new_status = prepare_object_keys(
             dict((result.name, result.data) for result in record.results))
         node.status.update(new_status)
@@ -168,7 +169,8 @@ def get_logs():
 def get_nodes():
     nodes_col = server.db.nodes
     nodes = nodes_col.find(fields={"name": True})
-    nodes = [n["name"] for n in nodes]
+    nodes = [{'name': n["name"], 'url': url_for('get_node', name=n["name"])
+              } for n in nodes]
     return jsonify(nodes)
 
 

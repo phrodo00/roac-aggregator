@@ -84,3 +84,8 @@ function Alarm() {
     }
 }
 
+function NodeLink(name, url) {
+    var self = this;
+    self.name = ko.observable(name);
+    self.url = ko.observable(url);
+}

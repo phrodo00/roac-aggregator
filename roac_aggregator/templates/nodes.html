@@ -14,7 +14,7 @@
         Nodes
       </div>
       <div data-bind="foreach: nodes" class="list-group">
-        <a data-bind="text: $data, css: {active: $root.selected_node() == $data}, click: $parent.switch_node"
+        <a data-bind="text: name, css: {active: $root.selected_node() == $data}, click: $parent.switch_node"
           class="list-group-item" href="#"></a>
       </div>
     </div><!--./panel-->
@@ -30,8 +30,9 @@
       <dl class="dl-horizontal">
         <dt>Last update</dt><dd data-bind="text: formatted_updated_at"></dd>
       </dl>
-      <hr/>
       <div class="panel-body">
+      <hr/>
+        <h3>Status</h3>
         <pre data-bind="text: status_text, highlight:1"></pre>
       </div>
     </div><!--./panel-->
