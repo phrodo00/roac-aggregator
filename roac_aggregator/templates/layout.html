@@ -11,10 +11,22 @@
     <script src={{url_for('static', filename='js/knockout-2.3.0.js')}}></script>
     <script src={{url_for('static', filename='js/highlight.pack.js')}}></script>
     <script src={{url_for('static', filename='js/common.js')}}></script>
+    <style>
+    body {
+      padding-top: 70px;
+    }
+    .panel-darker .panel-body {
+      background: #dce4ec;
+    }
+    .navbar-brand {
+      background: url("{{url_for('static', filename='img/logo.png')}}") 4px 1px no-repeat;
+      text-indent: 55px;
+    }
+    </style>
     {% block head %}{% endblock %}
 </head>
 <body>
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="navbar-header">
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
       <span class="sr-only">Toggle navigation</span>
