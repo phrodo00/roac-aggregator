@@ -92,7 +92,7 @@ def new_log():
     try:
         Record.validate_model(request.get_json())
         record = Record.load(request.get_json())
-        record = prepare_object_keys(record)
+        record.results = prepare_object_keys(record.results)
 
     except Exception as e:
         app.logger.exception(e)
