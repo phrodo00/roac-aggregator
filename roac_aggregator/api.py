@@ -11,6 +11,7 @@ from .mongodb import prepare_object_keys
 from .alarms import run_alarms
 
 from datetime import datetime
+from functools import wraps
 
 
 class InvalidUsage(Exception):
@@ -37,6 +38,18 @@ def handle_invalid_usage(error):
     return response
 
 
+def ensure_indexes(f):
+    """Decorator that makes sure the needed indexes are created in the database
+    """
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        server.db.nodes.ensure_index([('name', mongodb.ASCENDING)],
+                                     unique=True)
+        server.db.log.ensure_index([('created_at', mongodb.DESCENDING)])
+        return f(*args, **kwargs)
+    return decorated
+
+
 def validate_ip(ip, name):
     """Compare the node name with the IP's name and discard results that don't
     match.
@@ -51,6 +64,7 @@ def validate_ip(ip, name):
 
 
 @app.route('/api/v1/log', methods=['POST'])
+@ensure_indexes
 def new_log():
     """
     Gets an update from a node in the following schema:
@@ -137,6 +151,7 @@ def new_log():
 
 
 @app.route('/api/v1/logs/')
+@ensure_indexes
 def get_logs():
     try:
         count = request.args.get('count')
@@ -166,6 +181,7 @@ def get_logs():
 
 
 @app.route('/api/v1/nodes/')
+@ensure_indexes
 def get_nodes():
     nodes_col = server.db.nodes
     nodes = nodes_col.find(fields={"name": True})
@@ -175,6 +191,7 @@ def get_nodes():
 
 
 @app.route('/api/v1/nodes/<name>')
+@ensure_indexes
 def get_node(name):
     nodes = server.db.nodes
     node = nodes.find_one({"name": name})
@@ -184,6 +201,7 @@ def get_node(name):
 
 
 @app.route('/api/v1/alarms/')
+@ensure_indexes
 def get_alarms():
     collection = server.db.alarms
     alarms = collection.find()
@@ -191,6 +209,7 @@ def get_alarms():
 
 
 @app.route('/api/v1/alarms/', methods=['POST'])
+@ensure_indexes
 def post_alarms():
     try:
         alarms = []
@@ -218,6 +237,7 @@ def post_alarms():
 
 
 @app.route('/api/v1/alarms/<id>', methods=['DELETE'])
+@ensure_indexes
 def delete_alarm(id):
     id = ObjectId(id)
     alarms = server.db.alarms
