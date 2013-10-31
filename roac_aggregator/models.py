@@ -40,15 +40,6 @@ class MapAttrToItem(AttrToItem):
         AttrToItem.__set__(self, obj, value)
 
 
-class Result(dict):
-    name = AttrToItem('name')
-    path = AttrToItem('path')
-    data = AttrToItem('data')
-
-    def __repr__(self):
-        return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
-
-
 class JsonSchema(object):
     """Provides a validate_model that check an object hierarchy against the
     json-schema defined in the schema class variable"""
@@ -57,6 +48,15 @@ class JsonSchema(object):
     @classmethod
     def validate_model(cls, s):
         validate_schema(s, cls.schema)
+
+
+class Result(dict):
+    name = AttrToItem('name')
+    path = AttrToItem('path')
+    data = AttrToItem('data')
+
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, dict.__repr__(self))
 
 
 class Record(dict, JsonSchema):
@@ -133,7 +133,11 @@ class Alarm(dict, JsonSchema):
                     'type': 'object',
                     'properties': {
                         'path': {'type': 'string'},
-                        'operator': {'type': 'string'},
+                        'operator': {
+                            'type': {'enum': [
+                                "gt", "lt", "lte", "gte", "==", "ne"
+                            ]}
+                        },
                         'value': {'type': ['string', 'number']}
                     },
                     'required': ['path', 'operator', 'value']
