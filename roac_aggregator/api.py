@@ -54,6 +54,9 @@ def validate_ip(ip, name):
     """Compare the node name with the IP's name and discard results that don't
     match.
     """
+    if not app.config['VALIDATE_NAMES']:
+        return
+
     ip_name = socket.gethostbyaddr(ip)[0]
     ip_name = ip_name.split('.')[0]
     # Raises exception if ip_name and name don't coincide, unless ip starts
@@ -61,6 +64,40 @@ def validate_ip(ip, name):
     if not ip.startswith('127.') and ip_name != name:
         raise InvalidUsage(
             'Info about nodes should be posted by the same node', 403)
+
+
+def add_log_record(record):
+    if '_id' in record:
+        del record['_id']
+
+    # Save the log record.
+    log = server.db.log
+    log.insert(record)
+
+    # Merge data into node.
+    nodes = server.db.nodes
+    node = nodes.find_one({"name": record.name})
+    if node is None:
+        node = Node.build(record.name)
+    else:
+        node = Node(node)
+
+    if 'updated_at' not in node or (
+            'updated_at' in node and record.created_at > node.updated_at):
+
+        new_status = prepare_object_keys(
+            dict((result.name, result.data) for result in record.results))
+        node.status.update(new_status)
+
+        # Update updated_at field
+        node.updated_at = datetime.utcnow()
+
+        # Save node
+        nodes.save(node)
+
+        #check alarms on node
+        run_alarms(node)
+    return record
 
 
 @app.route('/api/v1/log', methods=['POST'])
@@ -114,36 +151,7 @@ def new_log():
 
     validate_ip(request.remote_addr, record.name)
 
-    if '_id' in record:
-        del record['_id']
-
-    # Save the log record.
-    log = server.db.log
-    log.insert(record)
-
-    # Merge data into node.
-    nodes = server.db.nodes
-    node = nodes.find_one({"name": record.name})
-    if node is None:
-        node = Node.build(record.name)
-    else:
-        node = Node(node)
-
-    if 'updated_at' not in node or (
-            'updated_at' in node and record.created_at > node.updated_at):
-
-        new_status = prepare_object_keys(
-            dict((result.name, result.data) for result in record.results))
-        node.status.update(new_status)
-
-        # Update updated_at field
-        node.updated_at = datetime.utcnow()
-
-        # Save node
-        nodes.save(node)
-
-        #check alarms on node
-        run_alarms(node)
+    record = add_log_record(record)
 
     response = jsonify(record)
     response.status = "201 CREATED"

@@ -30,7 +30,7 @@ class MongoDB(object):
                 self._db.authenticate(username, password)
             else:
                 if any((username, password)):
-                    self.app.logger.info(
+                    self.app.logger.warning(
                         "Need both username and password to authenticate")
         return self._db
 
