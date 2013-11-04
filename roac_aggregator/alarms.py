@@ -25,7 +25,7 @@ def run_alarms(node):
 def evaluate_alarm(alarm, node):
     results = [evaluate_criterium(criterium, node) for criterium in
                alarm.criteria]
-    return reduce(lambda x, y: x and y, results)
+    return any(results) and (len(results) > 0)
 
 
 def evaluate_criterium(crit, node):
@@ -68,7 +68,7 @@ def evaluate_criterium(crit, node):
 
     if len(results) == 0:
         return False
-    return reduce(lambda x, y: x or y, results)
+    return any(results)
 
 
 def path_values(path, obj):
