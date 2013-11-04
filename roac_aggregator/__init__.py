@@ -1,8 +1,8 @@
 from __future__ import absolute_import
 from flask import Flask
 from .json import JSONEncoder
-from .mongodb import MongoDB
 from flask.ext.mail import Mail
+from flask.ext.pymongo import PyMongo
 
 
 app = Flask(__name__.split('.')[0], instance_relative_config=True)
@@ -15,7 +15,7 @@ app.config.from_envvar('ROACAGG_SETTINGS', silent=True)
 app.json_encoder = JSONEncoder
 
 
-server = MongoDB(app)
+server = PyMongo(app)
 mail = Mail(app)
 
 

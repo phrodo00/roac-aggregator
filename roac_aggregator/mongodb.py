@@ -3,30 +3,6 @@ from pymongo import MongoClient, ASCENDING, DESCENDING
 from collections import MutableMapping, MutableSequence
 
 
-class MongoDB(object):
-    def __init__(self, app=None):
-        if app:
-            self.init_app(app)
-
-    def init_app(self, app):
-        self.app = app
-
-    # Lazy load MongoClient and the database so that the application doesn't
-    # fail to start when the server is down.
-    @property
-    def client(self):
-        if not hasattr(self, '_client'):
-            self._client = MongoClient(
-                self.app.config.setdefault('MONGO_HOST', 'localhost'))
-        return self._client
-
-    @property
-    def db(self):
-        if not hasattr(self, '_db'):
-            self._db = self.client[self.app.config['MONGO_DBNAME']]
-        return self._db
-
-
 def prepare_object_keys(obj, repl_str='_'):
     """ Recursively replaces dots in mapping keys by underscores to save them
     to mongodb. Other objects are left alone. (Mappings must be of the
