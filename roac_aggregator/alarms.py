@@ -25,7 +25,7 @@ def run_alarms(node):
 def evaluate_alarm(alarm, node):
     results = [evaluate_criterium(criterium, node) for criterium in
                alarm.criteria]
-    return any(results) and (len(results) > 0)
+    return all(results) and (len(results) > 0)
 
 
 def evaluate_criterium(crit, node):
