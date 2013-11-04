@@ -24,6 +24,14 @@ class MongoDB(object):
     def db(self):
         if not hasattr(self, '_db'):
             self._db = self.client[self.app.config['MONGO_DBNAME']]
+            username = self.app.config.setdefault('MONGO_USERNAME', None)
+            password = self.app.config.setdefault('MONGO_PASSWORD', None)
+            if all((username, password)):
+                self._db.authenticate(username, password)
+            else:
+                if any((username, password)):
+                    self.app.logger.info(
+                        "Need both username and password to authenticate")
         return self._db
 
 
