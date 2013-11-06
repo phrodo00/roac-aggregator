@@ -48,7 +48,7 @@
             <input class="form-control input-sm" data-bind="value: path"/>
           </div>
           <div class="col-xs-2">
-            <select class="form-control input-sm" data-bind="value: operator, options: $root.oper_possib"></select>
+            <select class="form-control input-sm" data-bind="value: operator, options: $root.operators, optionsText: 'text', optionsValue: 'value'"></select>
           </div>
           <div class="col-xs-4">
             <input class="form-control input-sm" data-bind="value: value"/>

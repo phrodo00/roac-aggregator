@@ -4,7 +4,15 @@ $(function() {
         self.alarms = ko.observableArray([]);
 
         self.action_possib = ko.observableArray(['mail']);
-        self.oper_possib = ko.observableArray(['gt', 'gte', 'lt', 'lte', '==', 'ne'])
+
+        self.operators = [
+          {'value': 'gt', 'text': '>'},
+          {'value': 'gte', 'text': '≥'},
+          {'value': 'lt', 'text': '<'},
+          {'value': 'lte', 'text': '≤'},
+          {'value': '==', 'text': '='},
+          {'value': 'ne', 'text': '≠'},
+          ];
 
         self.read_from_jsom_array = function(data) {
             alarms = $.map(data, function(alarm) {
@@ -25,11 +33,14 @@ $(function() {
         }
 
         self.save_alarms = function() {
-            $.ajax("/api/v1/alarms/", {
-                data: ko.toJSON(self.alarms),
-                type: "post", contentType: "application/json",
-                success: self.read_from_jsom_array
-            });
+            console.log(ko.toJSON(self.alarms));
+            /*
+             *$.ajax("/api/v1/alarms/", {
+             *    data: ko.toJSON(self.alarms),
+             *    type: "post", contentType: "application/json",
+             *    success: self.read_from_jsom_array
+             *});
+             */
         }
 
         self.add_alarm = function() {
