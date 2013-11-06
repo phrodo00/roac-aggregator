@@ -44,8 +44,10 @@ def ensure_indexes(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         server.db.nodes.ensure_index([('name', mongodb.ASCENDING)],
-                                     unique=True)
-        server.db.log.ensure_index([('created_at', mongodb.DESCENDING)])
+                                     unique=True, name='name_unique')
+        server.db.log.ensure_index([('created_at', mongodb.DESCENDING)],
+                                   name='created_at_ttl',
+                                   expireAfterSeconds=app.config['LOG_TTL'])
         return f(*args, **kwargs)
     return decorated
 
