@@ -28,6 +28,9 @@ function Node(name, status_, updated_at) {
         year    = self.updated_at().getFullYear();
         seconds = self.updated_at().getSeconds();
         minutes = self.updated_at().getMinutes();
+        if(minutes < 10) {
+            minutes = "0" + minutes;
+        }
         hours   = self.updated_at().getHours();
         return year+"-"+month+"-"+days+ " " +hours+":"+minutes+":"+seconds
       }
@@ -51,6 +54,9 @@ function Record(name, created_at, results) {
   self.formated_time = ko.computed(function() {
     seconds = self.created_at().getSeconds();
     minutes = self.created_at().getMinutes();
+    if(minutes < 10) {
+        minutes = "0" + minutes;
+    }
     hours = self.created_at().getHours();
     return hours + ':' + minutes + ':' + seconds;
   });
